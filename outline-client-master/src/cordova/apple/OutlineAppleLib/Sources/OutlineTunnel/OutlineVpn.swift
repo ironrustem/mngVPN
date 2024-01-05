@@ -20,7 +20,7 @@ import Tun2socks
 @objcMembers
 public class SayvpnVpn: NSObject {
   public static let shared = SayvpnVpn()
-  private static let kVpnExtensionBundleId = "ru.sayrustem.mangoVPN.ext"
+  private static let kVpnExtensionBundleId = "\(Bundle.main.bundleIdentifier!).VpnExtension"
 
   public typealias Callback = (ErrorCode) -> Void
   public typealias VpnStatusObserver = (NEVPNStatus, String) -> Void
