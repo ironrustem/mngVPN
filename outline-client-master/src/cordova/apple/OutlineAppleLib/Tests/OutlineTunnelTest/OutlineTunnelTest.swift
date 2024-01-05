@@ -3,16 +3,16 @@ import XCTest
 import NetworkExtension
 import Tun2socks
 
-@testable import OutlineTunnel
+@testable import SayvpnTunnel
 @testable import PacketTunnelProvider
 
-final class OutlineTunnelTest: XCTestCase {
+final class SayvpnTunnelTest: XCTestCase {
     
-    static let kAppGroup = "outline.spm.tests"
+    static let kAppGroup = "sayvpn.spm.tests"
     
     // Example test
     func testTunnelStoreDoesNotLoadBeforeSetup() throws {
-        let tunnelStore = OutlineTunnelStore(appGroup: OutlineTunnelTest.kAppGroup)
+        let tunnelStore = SayvpnTunnelStore(appGroup: SayvpnTunnelTest.kAppGroup)
         XCTAssertNil(tunnelStore.load())
     }
     
@@ -25,7 +25,7 @@ final class OutlineTunnelTest: XCTestCase {
     }
     
     func testGetTunnelNetworkSettings() {
-        let settings = OutlineTunnel.getTunnelNetworkSettings(tunnelRemoteAddress: "1.2.3.4")
+        let settings = SayvpnTunnel.getTunnelNetworkSettings(tunnelRemoteAddress: "1.2.3.4")
         
         XCTAssertEqual("1.2.3.4", settings.tunnelRemoteAddress)
         

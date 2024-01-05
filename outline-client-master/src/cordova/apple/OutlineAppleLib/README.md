@@ -1,4 +1,4 @@
-# OutlineAppleLib
+# SayvpnAppleLib
 
-This package provides all Outline Apple logic, including the Outline Tun2socks
+This package provides all Sayvpn Apple logic, including the Sayvpn Tun2socks
 framework, as a Swift Package.

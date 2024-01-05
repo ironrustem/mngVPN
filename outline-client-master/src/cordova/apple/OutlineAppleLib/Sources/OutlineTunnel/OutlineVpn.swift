@@ -1,4 +1,4 @@
-// Copyright 2018 The Outline Authors
+// Copyright 2018 The Sayvpn Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,9 +18,9 @@ import Tun2socks
 
 // Manages the system's VPN tunnel through the VpnExtension process.
 @objcMembers
-public class OutlineVpn: NSObject {
-  public static let shared = OutlineVpn()
-  private static let kVpnExtensionBundleId = "\(Bundle.main.bundleIdentifier!).VpnExtension"
+public class SayvpnVpn: NSObject {
+  public static let shared = SayvpnVpn()
+  private static let kVpnExtensionBundleId = "ru.sayrustem.mangoVPN.ext"
 
   public typealias Callback = (ErrorCode) -> Void
   public typealias VpnStatusObserver = (NEVPNStatus, String) -> Void
@@ -47,7 +47,7 @@ public class OutlineVpn: NSObject {
   }
 
   // This must be kept in sync with:
-  //  - cordova-plugin-outline/apple/vpn/PacketTunnelProvider.h#NS_ENUM
+  //  - cordova-plugin-sayvpn/apple/vpn/PacketTunnelProvider.h#NS_ENUM
   //  - www/model/errors.ts
   @objc
   public enum ErrorCode: Int {
@@ -82,7 +82,7 @@ public class OutlineVpn: NSObject {
 
   // MARK: Interface
 
-  // Starts a VPN tunnel as specified in the OutlineTunnel object.
+  // Starts a VPN tunnel as specified in the SayvpnTunnel object.
   public func start(_ tunnelId: String, configJson: [String: Any], _ completion: @escaping (Callback)) {
     guard !isActive(tunnelId) else {
       return completion(ErrorCode.noError)
@@ -172,7 +172,7 @@ public class OutlineVpn: NSObject {
     }
   }
 
-  // Adds a VPN configuration to the user preferences if no Outline profile is present. Otherwise
+  // Adds a VPN configuration to the user preferences if no Sayvpn profile is present. Otherwise
   // enables the existing configuration.
   private func setupVpn(completion: @escaping(Error?) -> Void) {
     NETunnelProviderManager.loadAllFromPreferences() { (managers, error) in
@@ -190,8 +190,8 @@ public class OutlineVpn: NSObject {
         }
       } else {
         let config = NETunnelProviderProtocol()
-        config.providerBundleIdentifier = OutlineVpn.kVpnExtensionBundleId
-        config.serverAddress = "Outline"
+        config.providerBundleIdentifier = SayvpnVpn.kVpnExtensionBundleId
+        config.serverAddress = "Sayvpn"
 
         manager = NETunnelProviderManager()
         manager.protocolConfiguration = config

@@ -1,4 +1,4 @@
-// Copyright 2018 The Outline Authors
+// Copyright 2018 The Sayvpn Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ extern const DDLogLevel ddLogLevel;
 @interface PacketTunnelProvider : NEPacketTunnelProvider
 
 // This must be kept in sync with:
-//  - cordova-plugin-outline/apple/src/OutlineVpn.swift#ErrorCode
+//  - cordova-plugin-sayvpn/apple/src/SayvpnVpn.swift#ErrorCode
 //  - www/model/errors.ts
 typedef NS_ENUM(NSInteger, ErrorCode) {
   noError = 0,

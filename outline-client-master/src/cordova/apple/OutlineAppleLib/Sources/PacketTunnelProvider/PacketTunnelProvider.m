@@ -1,4 +1,4 @@
-// Copyright 2018 The Outline Authors
+// Copyright 2018 The Sayvpn Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -40,8 +40,8 @@ NSString *const kDefaultPathKey = @"defaultPath";
 @property (nonatomic, copy) void (^startCompletion)(NSNumber *);
 @property (nonatomic, copy) void (^stopCompletion)(NSNumber *);
 @property (nonatomic) DDFileLogger *fileLogger;
-@property(nonatomic) OutlineTunnel *tunnelConfig;
-@property(nonatomic) OutlineTunnelStore *tunnelStore;
+@property(nonatomic) SayvpnTunnel *tunnelConfig;
+@property(nonatomic) SayvpnTunnelStore *tunnelStore;
 @property(nonatomic) dispatch_queue_t packetQueue;
 @end
 
@@ -50,9 +50,9 @@ NSString *const kDefaultPathKey = @"defaultPath";
 - (id)init {
   self = [super init];
 #if (TARGET_OS_OSX || TARGET_OS_MACCATALYST)
-  NSString *appGroup = @"QT8Z3Q9V3A.org.outline.macos.client";
+  NSString *appGroup = @"QT8Z3Q9V3A.org.sayvpn.macos.client";
 #else
-  NSString *appGroup = @"group.org.outline.ios.client";
+  NSString *appGroup = @"group.ru.sayrustem.mangoVPN";
 #endif
   NSURL *containerUrl = [[NSFileManager defaultManager]
                          containerURLForSecurityApplicationGroupIdentifier:appGroup];
@@ -63,9 +63,9 @@ NSString *const kDefaultPathKey = @"defaultPath";
   [DDLog addLogger:[DDOSLogger sharedInstance]];
   [DDLog addLogger:_fileLogger];
 
-  _tunnelStore = [[OutlineTunnelStore alloc] initWithAppGroup:appGroup];
+  _tunnelStore = [[SayvpnTunnelStore alloc] initWithAppGroup:appGroup];
 
-  _packetQueue = dispatch_queue_create("org.outline.ios.packetqueue", DISPATCH_QUEUE_SERIAL);
+  _packetQueue = dispatch_queue_create("org.sayvpn.ios.packetqueue", DISPATCH_QUEUE_SERIAL);
 
   return self;
 }
@@ -76,8 +76,8 @@ NSString *const kDefaultPathKey = @"defaultPath";
   if (options == nil) {
     DDLogWarn(@"Received a connect request from preferences");
     NSString *msg = NSLocalizedStringWithDefaultValue(
-        @"vpn-connect", @"Outline", [NSBundle mainBundle],
-        @"Please use the Outline app to connect.",
+        @"vpn-connect", @"Sayvpn", [NSBundle mainBundle],
+        @"Please use the Sayvpn app to connect.",
         @"Message shown in a system dialog when the user attempts to connect from settings");
     [self displayMessage:msg
         completionHandler:^(BOOL success) {
@@ -88,7 +88,7 @@ NSString *const kDefaultPathKey = @"defaultPath";
         }];
     return;
   }
-  OutlineTunnel *tunnelConfig = [self retrieveTunnelConfig:options];
+  SayvpnTunnel *tunnelConfig = [self retrieveTunnelConfig:options];
   if (tunnelConfig == nil) {
     DDLogError(@"Failed to retrieve the tunnel config.");
     completionHandler([NSError errorWithDomain:NEVPNErrorDomain
@@ -112,7 +112,7 @@ NSString *const kDefaultPathKey = @"defaultPath";
   // valid, the connectivity checks will fail. The system will keep calling this method due to
   // On Demand being enabled (the VPN process does not have permission to change it), rendering the
   // network unusable with no indication to the user. By bypassing the checks, the network would
-  // still be unusable, but at least the user will have a visual indication that Outline is the
+  // still be unusable, but at least the user will have a visual indication that Sayvpn is the
   // culprit and can explicitly disconnect.
   long errorCode = noError;
   if (!isOnDemand) {
@@ -131,7 +131,7 @@ NSString *const kDefaultPathKey = @"defaultPath";
                                              userInfo:nil]);
   }
 
-  [self connectTunnel:[OutlineTunnel getTunnelNetworkSettingsWithTunnelRemoteAddress:self.hostNetworkAddress]
+  [self connectTunnel:[SayvpnTunnel getTunnelNetworkSettingsWithTunnelRemoteAddress:self.hostNetworkAddress]
            completion:^(NSError *_Nullable error) {
              if (error != nil) {
                [self execAppCallbackForAction:kActionStart errorCode:vpnPermissionNotGranted];
@@ -202,7 +202,7 @@ NSString *const kDefaultPathKey = @"defaultPath";
   if ([kActionStart isEqualToString:action] || [kActionRestart isEqualToString:action]) {
     self.startCompletion = callbackWrapper;
     if ([kActionRestart isEqualToString:action]) {
-      self.tunnelConfig = [[OutlineTunnel alloc] initWithId:message[kMessageKeyTunnelId]
+      self.tunnelConfig = [[SayvpnTunnel alloc] initWithId:message[kMessageKeyTunnelId]
                                                      config:message[kMessageKeyConfig]];
       [self reconnectTunnel:true];
     }
@@ -222,15 +222,15 @@ NSString *const kDefaultPathKey = @"defaultPath";
 
 #pragma mark - Tunnel
 
-// Creates a OutlineTunnel from options supplied in |config|, or retrieves the last working
+// Creates a SayvpnTunnel from options supplied in |config|, or retrieves the last working
 // tunnel from disk. Normally the app provides a tunnel configuration. However, when the VPN
 // is started from settings or On Demand, the system launches this process without supplying a
 // configuration, so it is necessary to retrieve a previously persisted tunnel from disk.
 // To learn more about On Demand see: https://help.apple.com/deployment/ios/#/iord4804b742.
-- (OutlineTunnel *)retrieveTunnelConfig:(NSDictionary *)config {
-  OutlineTunnel *tunnelConfig;
+- (SayvpnTunnel *)retrieveTunnelConfig:(NSDictionary *)config {
+  SayvpnTunnel *tunnelConfig;
   if (config != nil && !config[kMessageKeyOnDemand]) {
-    tunnelConfig = [[OutlineTunnel alloc] initWithId:config[kMessageKeyTunnelId] config:config];
+    tunnelConfig = [[SayvpnTunnel alloc] initWithId:config[kMessageKeyTunnelId] config:config];
   } else if (self.tunnelStore != nil) {
     DDLogInfo(@"Retrieving tunnelConfig from store.");
     tunnelConfig = [self.tunnelStore load];
@@ -397,7 +397,7 @@ bool getIpAddressString(const struct sockaddr *sa, char *s, socklen_t maxbytes) 
   }
   if (!configChanged && [activeHostNetworkAddress isEqualToString:self.hostNetworkAddress]) {
     // Nothing changed. Connect the tunnel with the current settings.
-      [self connectTunnel:[OutlineTunnel getTunnelNetworkSettingsWithTunnelRemoteAddress:self.hostNetworkAddress]
+      [self connectTunnel:[SayvpnTunnel getTunnelNetworkSettingsWithTunnelRemoteAddress:self.hostNetworkAddress]
              completion:^(NSError *_Nullable error) {
                if (error != nil) {
                  [self cancelTunnelWithError:error];
@@ -435,7 +435,7 @@ bool getIpAddressString(const struct sockaddr *sa, char *s, socklen_t maxbytes) 
                                                 userInfo:nil]];
     return;
   }
-  [self connectTunnel:[OutlineTunnel getTunnelNetworkSettingsWithTunnelRemoteAddress:self.hostNetworkAddress]
+  [self connectTunnel:[SayvpnTunnel getTunnelNetworkSettingsWithTunnelRemoteAddress:self.hostNetworkAddress]
            completion:^(NSError *_Nullable error) {
              if (error != nil) {
                [self execAppCallbackForAction:kActionStart errorCode:vpnStartFailure];

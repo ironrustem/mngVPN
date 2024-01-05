@@ -1,4 +1,4 @@
-// Copyright 2018 The Outline Authors
+// Copyright 2018 The Sayvpn Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,11 +18,11 @@ import NetworkExtension
 import CocoaLumberjackSwift
 
 // Serializable class to wrap a tunnel's configuration.
-// Properties must be kept in sync with ServerConfig in www/types/outlinePlugin.d.ts
+// Properties must be kept in sync with ServerConfig in www/types/sayvpnPlugin.d.ts
 // Note that this class and its non-private properties must be public in order to be visible to the ObjC
-// target of the OutlineAppleLib Swift Package.
+// target of the SayvpnAppleLib Swift Package.
 @objcMembers
-public class OutlineTunnel: NSObject, Codable {
+public class SayvpnTunnel: NSObject, Codable {
     public var id: String?
     public var host: String?
     public var port: String?
@@ -62,13 +62,13 @@ public class OutlineTunnel: NSObject, Codable {
         return try? JSONEncoder().encode(self)
     }
     
-    public static func decode(_ jsonData: Data) -> OutlineTunnel? {
-        return try? JSONDecoder().decode(OutlineTunnel.self, from: jsonData)
+    public static func decode(_ jsonData: Data) -> SayvpnTunnel? {
+        return try? JSONDecoder().decode(SayvpnTunnel.self, from: jsonData)
     }
 
     // Helper function that we can call from Objective-C.
     @objc public static func getTunnelNetworkSettings(tunnelRemoteAddress: String) -> NEPacketTunnelNetworkSettings {
-        // The remote address is not used for routing, but for display in Settings > VPN > Outline.
+        // The remote address is not used for routing, but for display in Settings > VPN > Sayvpn.
         let settings = NEPacketTunnelNetworkSettings(tunnelRemoteAddress: tunnelRemoteAddress)
 
         // Configure VPN address and routing.

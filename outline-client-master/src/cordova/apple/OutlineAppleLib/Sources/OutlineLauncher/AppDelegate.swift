@@ -1,4 +1,4 @@
-// Copyright 2018 The Outline Authors
+// Copyright 2018 The Sayvpn Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
     import CocoaLumberjack
     import CocoaLumberjackSwift
     import NetworkExtension
-    import OutlineCatalystApp
+    import SayvpnCatalystApp
     import UIKit
 
     @UIApplicationMain
@@ -31,10 +31,10 @@
                     appKitController._AppKitBridge_terminate()
                 }
                 if !shouldLaunch {
-                    DDLogInfo("Not launching, Outline not connected at shutdown")
+                    DDLogInfo("Not launching, Sayvpn not connected at shutdown")
                     return
                 }
-                DDLogInfo("Outline connected at shutdown. Launching")
+                DDLogInfo("Sayvpn connected at shutdown. Launching")
 
                 guard let launcherBundleId = Bundle.main.bundleIdentifier else {
                     DDLogError("Failed to retrieve the bundle ID for the launcher app.")

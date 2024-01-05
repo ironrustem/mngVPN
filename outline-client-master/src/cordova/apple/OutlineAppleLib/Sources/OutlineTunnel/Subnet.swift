@@ -1,4 +1,4 @@
-// Copyright 2018 The Outline Authors
+// Copyright 2018 The Sayvpn Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@ import Foundation
 
 // Represents an IP subnetwork.
 // Note that this class and its non-private properties must be public in order to be visible to the ObjC
-// target of the OutlineAppleLib Swift Package.
+// target of the SayvpnAppleLib Swift Package.
 @objcMembers
 public class Subnet: NSObject {
   // Parses a CIDR subnet into a Subnet object. Returns nil on failure.

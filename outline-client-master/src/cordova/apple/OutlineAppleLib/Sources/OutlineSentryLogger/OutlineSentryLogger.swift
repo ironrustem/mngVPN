@@ -1,4 +1,4 @@
-// Copyright 2018 The Outline Authors
+// Copyright 2018 The Sayvpn Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@ import CocoaLumberjackSwift
 import Sentry
 
 // Custom CocoaLumberjack logger that logs messages to Sentry.
-public class OutlineSentryLogger: DDAbstractLogger {
+public class SayvpnSentryLogger: DDAbstractLogger {
     private static let kDateFormat = "yyyy/MM/dd HH:mm:ss:SSS"
     private static let kDatePattern = "[0-9]{4}/[0-9]{2}/[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}:[0-9]{3}"
 
@@ -70,7 +70,7 @@ public class OutlineSentryLogger: DDAbstractLogger {
         }
         
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = OutlineSentryLogger.kDateFormat
+        dateFormatter.dateFormat = SayvpnSentryLogger.kDateFormat
         var numBreadcrumbsAdded: UInt = 0
         // Log files are named by date, get the most recent.
         for logFile in logs.sorted().reversed() {
@@ -100,7 +100,7 @@ public class OutlineSentryLogger: DDAbstractLogger {
     
     private func parseTimestamp(in log:String) -> (String, String)? {
         do {
-            let regex = try NSRegularExpression(pattern: OutlineSentryLogger.kDatePattern)
+            let regex = try NSRegularExpression(pattern: SayvpnSentryLogger.kDatePattern)
             let logNsString = log as NSString // Cast to access NSString length and substring methods.
             let results = regex.matches(in: log, range: NSRange(location: 0, length: logNsString.length))
             if !results.isEmpty {

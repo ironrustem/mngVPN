@@ -1,4 +1,4 @@
-// Copyright 2023 The Outline Authors
+// Copyright 2023 The Sayvpn Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,11 +17,11 @@
     import CocoaLumberjack
     import CocoaLumberjackSwift
     import Foundation
-    import OutlineNotification
+    import SayvpnNotification
     import ServiceManagement
 
     @objcMembers
-    public class OutlineCatalystApp: NSObject {
+    public class SayvpnCatalystApp: NSObject {
         public static func initApp() {
             DDLog.add(DDOSLogger.sharedInstance)
 
